@@ -1,4 +1,4 @@
-use calamine::{open_workbook, Error, Xlsx, Reader, DataType, Range};
+use calamine::{open_workbook, Xlsx, Reader, DataType, Range};
 
 const PATH:&str = "statistics/fdic.xlsx";
 
@@ -16,19 +16,19 @@ struct FdicStat{
 }
 
 #[derive(Debug)]
-struct FdicStats {
+pub struct FdicStats {
     columns: FdicColumns,
     stats: Vec<FdicStat>
 }
 
 
-pub fn parse_xls() -> Result<(), Box<dyn std::error::Error>> {
+pub fn parse_xls() -> Result<Option<FdicStats>, Box<dyn std::error::Error>> {
     let mut excel: Xlsx<_> = open_workbook(PATH)?;
     println!("{:?}", excel.sheet_names());
     if let Some(Ok(r)) = excel.worksheet_range("FDIC") {
-        FdicStats::new(r);
+        return Ok(Some(FdicStats::new(r)));
     }
-    Ok(())
+    Ok(None)
 }
 
 
