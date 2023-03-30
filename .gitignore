@@ -1,4 +1,5 @@
 /target
 statistics/**
 !statistics/.gitkeep
+node_modules
 *swp
