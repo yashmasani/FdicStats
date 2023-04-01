@@ -1,6 +1,5 @@
 use calamine::{open_workbook, Xlsx, Reader, DataType, Range};
-
-const PATH:&str = "statistics/fdic.xlsx";
+use wasm_bindgen::prelude::*;
 
 #[derive(Debug, Clone, Copy)]
 struct FdicColumns {
@@ -15,6 +14,7 @@ struct FdicStat{
     stats: Vec<f64>
 }
 
+#[wasm_bindgen]
 #[derive(Debug)]
 pub struct FdicStats {
     columns: FdicColumns,
@@ -22,18 +22,8 @@ pub struct FdicStats {
 }
 
 
-pub fn parse_xls() -> Result<Option<FdicStats>, Box<dyn std::error::Error>> {
-    let mut excel: Xlsx<_> = open_workbook(PATH)?;
-    println!("{:?}", excel.sheet_names());
-    if let Some(Ok(r)) = excel.worksheet_range("FDIC") {
-        return Ok(Some(FdicStats::new(r)));
-    }
-    Ok(None)
-}
-
 
 impl FdicStat {
-
     fn new(name: String, row: &[DataType]) -> FdicStat {
         let mut stats = vec![];
         for col in row {
@@ -83,7 +73,11 @@ impl FdicColumns {
                 index_of_year_stop
             })
         } else {
-            None
+            Some(FdicColumns {
+                index_of_name: 0,
+                index_of_year: 0,
+                index_of_year_stop: 0
+            })
         }
     }
     
@@ -95,6 +89,7 @@ impl FdicColumns {
     }
 }
 
+#[wasm_bindgen]
 impl FdicStats {
     fn new<'a>(r: Range<DataType>) -> Self {
         let mut fdic_col: Option<FdicColumns> = None;
@@ -120,6 +115,15 @@ impl FdicStats {
         }
         println!("{:?}", &fdic_stats[fdic_stats.len() - 1]);
         FdicStats{ columns: fdic_col.unwrap(), stats: fdic_stats }
+    }
+    
+    pub fn parse_xls(path: &str) -> Result<FdicStats, JsValue> {
+        let mut excel: Xlsx<_> = open_workbook(path).unwrap_throw();
+        println!("{:?}", excel.sheet_names());
+        if let Some(Ok(r)) = excel.worksheet_range("FDIC") {
+            return Ok(FdicStats::new(r));
+        }
+        Err(JsValue::undefined())
     }
 }
 

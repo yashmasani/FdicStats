@@ -3,6 +3,7 @@ set -xe
 
 rustup target add wasm32-unknown-unknown
 
+#add wget fdic
 INSTALLS=$(cargo install --list)
 echo ${INSTALLS}
 
