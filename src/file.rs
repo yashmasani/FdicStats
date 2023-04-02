@@ -1,7 +1,10 @@
 use calamine::{open_workbook, Xlsx, Reader, DataType, Range};
 use wasm_bindgen::prelude::*;
+use serde::{Serialize, Deserialize};
+
 
 #[derive(Debug, Clone, Copy)]
+#[derive(Serialize, Deserialize)]
 struct FdicColumns {
     index_of_name: usize,
     index_of_year: usize,
@@ -9,16 +12,18 @@ struct FdicColumns {
 }
 
 #[derive(Debug)]
+#[derive(Serialize, Deserialize)]
 struct FdicStat{
     name: String,
     stats: Vec<f64>
 }
 
 #[wasm_bindgen]
+#[derive(Serialize, Deserialize)]
 #[derive(Debug)]
 pub struct FdicStats {
     columns: FdicColumns,
-    stats: Vec<FdicStat>
+    data: Vec<FdicStat>
 }
 
 
@@ -73,11 +78,7 @@ impl FdicColumns {
                 index_of_year_stop
             })
         } else {
-            Some(FdicColumns {
-                index_of_name: 0,
-                index_of_year: 0,
-                index_of_year_stop: 0
-            })
+            None
         }
     }
     
@@ -114,7 +115,7 @@ impl FdicStats {
             }
         }
         println!("{:?}", &fdic_stats[fdic_stats.len() - 1]);
-        FdicStats{ columns: fdic_col.unwrap(), stats: fdic_stats }
+        FdicStats{ columns: fdic_col.unwrap(), data: fdic_stats }
     }
     
     pub fn parse_xls(path: &str) -> Result<FdicStats, JsValue> {

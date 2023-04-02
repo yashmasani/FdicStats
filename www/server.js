@@ -1,6 +1,7 @@
 import './style.css'
 import { setupCounter } from './counter.js'
 import { Chart as wasmChart } from 'wasm-build';
+import * as Fdic from './fdic.json';
 
 // document.querySelector('#app').innerHTML = `
 //   <div>
@@ -19,6 +20,7 @@ Chart = wasmChart;
 const canvas = document.getElementById("canvas");
 const coord = document.getElementById("coord");
 let chart = null;
-console.log(wasmChart);
-chart = Chart.draw("canvas", [], [])
+console.log(Fdic);
+const { data } = Fdic;
+chart = Chart.draw("canvas", data[0].stats, data[1].stats)
 

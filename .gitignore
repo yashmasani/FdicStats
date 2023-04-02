@@ -2,4 +2,5 @@
 statistics/**
 !statistics/.gitkeep
 node_modules
+www/fdic.json
 *swp

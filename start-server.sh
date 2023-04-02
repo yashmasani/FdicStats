@@ -1,6 +1,10 @@
 #!/bin/sh
 set -xe
 
+cargo run
+
+cp statistics/fdic.json www/
+
 rustup target add wasm32-unknown-unknown
 
 #add wget fdic

@@ -13,20 +13,20 @@ pub fn draw(canvas_id: &str, x: &[f32], y: &[f32]) -> DrawResult<impl Fn((i32, i
     let font: FontDesc = ("sans-serif", 20.0).into();
     let power = 2; 
     root.fill(&WHITE)?;
-
+    let x_max = x.iter().max_by(|a,b| a.partial_cmp(b).unwrap()).unwrap_or(&2000f32);
+    let y_max = y.iter().max_by(|a,b| a.partial_cmp(b).unwrap()).unwrap_or(&2000f32);
     let mut chart = ChartBuilder::on(&root)
         .margin(20u32)
         .caption(format!("y=x^{}", power), font)
         .x_label_area_size(30u32)
         .y_label_area_size(30u32)
-        .build_cartesian_2d(-1f32..1f32, -1.2f32..1.2f32)?;
+        .build_cartesian_2d(1f32..*x_max, 1.2f32..*y_max)?;
 
-    chart.configure_mesh().x_labels(3).y_labels(3).draw()?;
+    chart.configure_mesh().x_labels(20).y_labels(20).draw()?;
 
     chart.draw_series(LineSeries::new(
-        (-50..=50)
-            .map(|x| x as f32 / 50.0)
-            .map(|x| (x, x.powf(power as f32))),
+        (0..x.len())
+            .map(|i| (x[i],y[i])),
         &RED,
     ))?;
 
